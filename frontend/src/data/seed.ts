@@ -838,4 +838,7 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
       "备件状态": "备品备件样例3"
     }
   ],
+  // 生态流量台账与下泄预警：首次打开时由存量回填统一播种，这里留空。
+  "ecoflow": [],
+  "ecoflow_warning": [],
 }

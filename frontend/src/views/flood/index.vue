@@ -67,6 +67,34 @@
       <span>共 {{ total }} 条泄洪操作记录</span>
       <span v-if="errorMessage" class="error-text">{{ errorMessage }}</span>
     </footer>
+
+    <section class="eco-panel">
+      <h3 class="eco-title">生态流量下泄预警（与水情记录同一个判定结果，未收尾的都在这里）</h3>
+      <p class="status-legend">
+        <span class="legend-item">未达标记录：{{ eco.short }} 条</span>
+        <span class="legend-item">连续未达标：{{ eco.shortHours }} 小时</span>
+        <span class="legend-item">待处置预警：{{ eco.pendingWarnings }} 条</span>
+        <span class="legend-item">处置中预警：{{ eco.handlingWarnings }} 条</span>
+      </p>
+      <table class="data-table">
+        <thead>
+          <tr><th>预警编号</th><th>观测时间</th><th>实测下泄流量</th><th>最小下泄指标</th><th>环评批复文号</th><th>当前状态</th></tr>
+        </thead>
+        <tbody>
+          <tr v-for="row in ecoOpen" :key="String(row.预警编号)">
+            <td>{{ row.预警编号 }}</td>
+            <td>{{ row.观测时间 }}</td>
+            <td>{{ row.实测下泄流量 }}</td>
+            <td>{{ row.最小下泄指标 }}</td>
+            <td>{{ row.环评批复文号 }}</td>
+            <td>{{ row.status }}</td>
+          </tr>
+          <tr v-if="!ecoOpen.length">
+            <td colspan="6" class="empty-state">当前没有未收尾的下泄预警</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
   </section>
 </template>
 
@@ -79,6 +107,7 @@ import {
   moduleMeta,
   runAction as applyAction,
 } from '@/api/local-service'
+import { ecoFlowSummary, openWarnings, type EcoSummary } from '@/api/eco-flow-service'
 import type { EntryRow } from '@/data/types'
 
 const meta = moduleMeta('flood')
@@ -90,6 +119,8 @@ const stats = [{"label": "待审批操作", "value": 0}, {"label": "泄洪中闸
 const rows = ref<EntryRow[]>([])
 const total = ref(0)
 const errorMessage = ref('')
+const eco = ref<EcoSummary>(ecoFlowSummary())
+const ecoOpen = ref<EntryRow[]>(openWarnings())
 const filters = ref<Record<string, string>>({})
 const filterFields = columns.slice(0, 3)
 const statusSummary = computed(() =>
@@ -128,6 +159,8 @@ function reload() {
     const payload = listEntries(meta.key, filters.value)
     rows.value = payload.items
     total.value = payload.total
+    eco.value = ecoFlowSummary()
+    ecoOpen.value = openWarnings()
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : '泄洪操作列表读取失败'
   }

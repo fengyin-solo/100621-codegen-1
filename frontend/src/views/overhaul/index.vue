@@ -22,6 +22,7 @@
       <span v-for="item in statusSummary" :key="item.status" class="legend-item">
         {{ item.status }}：{{ item.count }}
       </span>
+      <span class="legend-item">生态预警回写待办：{{ ecoLinked }} 条（与生态流量台账同源）</span>
     </p>
 
     <form class="filter-bar" @submit.prevent="reload">
@@ -79,10 +80,11 @@ import {
   moduleMeta,
   runAction as applyAction,
 } from '@/api/local-service'
+import { overhaulLinkedTodoCount } from '@/api/eco-flow-service'
 import type { EntryRow } from '@/data/types'
 
 const meta = moduleMeta('overhaul')
-const columns = ["工作票号", "检修机组", "检修级别", "计划工期", "实际工期", "工作负责人", "验收人员", "检修状态"]
+const columns = ["工作票号", "检修机组", "检修级别", "计划工期", "实际工期", "工作负责人", "验收人员", "检修状态", "处置结论"]
 const actions = ["提交审批", "开工检修", "办理完工"]
 const statuses = ["待审批", "已批准", "检修中", "已完工"]
 const stats = [{"label": "待审批工作票", "value": 0}, {"label": "检修中机组", "value": 0}, {"label": "已完工检修", "value": 0}]
@@ -90,6 +92,7 @@ const stats = [{"label": "待审批工作票", "value": 0}, {"label": "检修中
 const rows = ref<EntryRow[]>([])
 const total = ref(0)
 const errorMessage = ref('')
+const ecoLinked = ref(overhaulLinkedTodoCount())
 const filters = ref<Record<string, string>>({})
 const filterFields = columns.slice(0, 3)
 const statusSummary = computed(() =>
@@ -128,6 +131,7 @@ function reload() {
     const payload = listEntries(meta.key, filters.value)
     rows.value = payload.items
     total.value = payload.total
+    ecoLinked.value = overhaulLinkedTodoCount()
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : '机组检修列表读取失败'
   }

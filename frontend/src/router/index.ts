@@ -14,6 +14,7 @@ const Overhaul = () => import('@/views/overhaul/index.vue')
 const Bearing = () => import('@/views/bearing/index.vue')
 const Cooling = () => import('@/views/cooling/index.vue')
 const Hydrology = () => import('@/views/hydrology/index.vue')
+const Ecoflow = () => import('@/views/ecoflow/index.vue')
 const Flood = () => import('@/views/flood/index.vue')
 const Generation = () => import('@/views/generation/index.vue')
 const Protection = () => import('@/views/protection/index.vue')
@@ -38,6 +39,7 @@ const router = createRouter({
     { path: '/bearing', name: 'bearing', component: Bearing },
     { path: '/cooling', name: 'cooling', component: Cooling },
     { path: '/hydrology', name: 'hydrology', component: Hydrology },
+    { path: '/ecoflow', name: 'ecoflow', component: Ecoflow },
     { path: '/flood', name: 'flood', component: Flood },
     { path: '/generation', name: 'generation', component: Generation },
     { path: '/protection', name: 'protection', component: Protection },

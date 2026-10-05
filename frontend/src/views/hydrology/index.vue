@@ -67,6 +67,16 @@
       <span>共 {{ total }} 条水情调度记录</span>
       <span v-if="errorMessage" class="error-text">{{ errorMessage }}</span>
     </footer>
+
+    <section class="eco-panel">
+      <h3 class="eco-title">生态流量下泄监管（判定结果全站同源，本页不另算）</h3>
+      <p class="status-legend">
+        <span class="legend-item">未达标记录：{{ eco.short }} 条</span>
+        <span class="legend-item">连续未达标：{{ eco.shortHours }} 小时</span>
+        <span class="legend-item">待处置预警：{{ eco.pendingWarnings }} 条</span>
+        <span class="legend-item">处置中预警：{{ eco.handlingWarnings }} 条</span>
+      </p>
+    </section>
   </section>
 </template>
 
@@ -79,6 +89,7 @@ import {
   moduleMeta,
   runAction as applyAction,
 } from '@/api/local-service'
+import { ecoFlowSummary, type EcoSummary } from '@/api/eco-flow-service'
 import type { EntryRow } from '@/data/types'
 
 const meta = moduleMeta('hydrology')
@@ -90,6 +101,7 @@ const stats = [{"label": "今日入库流量", "value": 0}, {"label": "今日出
 const rows = ref<EntryRow[]>([])
 const total = ref(0)
 const errorMessage = ref('')
+const eco = ref<EcoSummary>(ecoFlowSummary())
 const filters = ref<Record<string, string>>({})
 const filterFields = columns.slice(0, 3)
 const statusSummary = computed(() =>
@@ -128,6 +140,7 @@ function reload() {
     const payload = listEntries(meta.key, filters.value)
     rows.value = payload.items
     total.value = payload.total
+    eco.value = ecoFlowSummary()
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : '水情调度列表读取失败'
   }

@@ -22,6 +22,7 @@
       <span v-for="item in statusSummary" :key="item.status" class="legend-item">
         {{ item.status }}：{{ item.count }}
       </span>
+      <span class="legend-item">生态预警联动待办：{{ ecoLinked }} 条（与生态流量台账同源）</span>
     </p>
 
     <form class="filter-bar" @submit.prevent="reload">
@@ -79,10 +80,11 @@ import {
   moduleMeta,
   runAction as applyAction,
 } from '@/api/local-service'
+import { gateLinkedTodoCount } from '@/api/eco-flow-service'
 import type { EntryRow } from '@/data/types'
 
 const meta = moduleMeta('gate')
-const columns = ["闸门编号", "闸门类型", "孔口尺寸", "当前开度", "启闭机型号", "操作人员", "操作时间", "闸门状态"]
+const columns = ["闸门编号", "闸门类型", "孔口尺寸", "当前开度", "启闭机型号", "操作人员", "操作时间", "闸门状态", "联动备注"]
 const actions = ["开启闸门", "关闭闸门", "登记故障"]
 const statuses = ["待操作", "运行中", "已关闭", "故障"]
 const stats = [{"label": "开启闸门", "value": 0}, {"label": "关闭闸门", "value": 0}, {"label": "故障闸门", "value": 0}]
@@ -90,6 +92,7 @@ const stats = [{"label": "开启闸门", "value": 0}, {"label": "关闭闸门", 
 const rows = ref<EntryRow[]>([])
 const total = ref(0)
 const errorMessage = ref('')
+const ecoLinked = ref(gateLinkedTodoCount())
 const filters = ref<Record<string, string>>({})
 const filterFields = columns.slice(0, 3)
 const statusSummary = computed(() =>
@@ -128,6 +131,7 @@ function reload() {
     const payload = listEntries(meta.key, filters.value)
     rows.value = payload.items
     total.value = payload.total
+    ecoLinked.value = gateLinkedTodoCount()
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : '闸门启闭列表读取失败'
   }
