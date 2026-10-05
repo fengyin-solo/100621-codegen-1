@@ -11,6 +11,8 @@
       </div>
     </header>
 
+    <EcoLinkedTodos variant="hydrology" />
+
     <div class="stat-row">
       <article v-for="item in stats" :key="item.label" class="stat-card">
         <span class="stat-label">{{ item.label }}</span>
@@ -80,6 +82,7 @@ import {
   runAction as applyAction,
 } from '@/api/local-service'
 import type { EntryRow } from '@/data/types'
+import EcoLinkedTodos from '@/components/EcoLinkedTodos.vue'
 
 const meta = moduleMeta('hydrology')
 const columns = ["记录编号", "观测时间", "上游水位", "下游水位", "入库流量", "出库流量", "值守人员", "调度状态"]

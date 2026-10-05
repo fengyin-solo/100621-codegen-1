@@ -11,6 +11,8 @@
       </div>
     </header>
 
+    <EcoLinkedTodos variant="overhaul" />
+
     <div class="stat-row">
       <article v-for="item in stats" :key="item.label" class="stat-card">
         <span class="stat-label">{{ item.label }}</span>
@@ -80,6 +82,7 @@ import {
   runAction as applyAction,
 } from '@/api/local-service'
 import type { EntryRow } from '@/data/types'
+import EcoLinkedTodos from '@/components/EcoLinkedTodos.vue'
 
 const meta = moduleMeta('overhaul')
 const columns = ["工作票号", "检修机组", "检修级别", "计划工期", "实际工期", "工作负责人", "验收人员", "检修状态"]

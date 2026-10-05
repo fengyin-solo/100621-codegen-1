@@ -11,6 +11,8 @@
       </div>
     </header>
 
+    <EcoLinkedTodos variant="gate" />
+
     <div class="stat-row">
       <article v-for="item in stats" :key="item.label" class="stat-card">
         <span class="stat-label">{{ item.label }}</span>
@@ -80,6 +82,7 @@ import {
   runAction as applyAction,
 } from '@/api/local-service'
 import type { EntryRow } from '@/data/types'
+import EcoLinkedTodos from '@/components/EcoLinkedTodos.vue'
 
 const meta = moduleMeta('gate')
 const columns = ["闸门编号", "闸门类型", "孔口尺寸", "当前开度", "启闭机型号", "操作人员", "操作时间", "闸门状态"]
